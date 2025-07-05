@@ -10,19 +10,19 @@ from sklearn.cluster import KMeans
 st.set_page_config(page_title="Segmentation Magasins", layout="wide")
 
 # Titre
-st.title("🛍️ Segmentation des magasins avec K-Means")
+st.title("Segmentation des magasins avec K-Means")
 
 # Importation des données
-uploaded_file = st.file_uploader("📂 Importer le fichier Excel", type=["xlsx"])
+uploaded_file = st.file_uploader("Importer le fichier Excel", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
-    st.write("✅ Colonnes détectées :", df.columns.tolist())
+    st.write("Colonnes détectées :", df.columns.tolist())
 
 
-    st.subheader("🔍 Aperçu des données")
+    st.subheader("Aperçu des données")
     st.dataframe(df.head())
 
-    st.subheader("📊 Statistiques descriptives")
+    st.subheader("Statistiques descriptives")
     st.write(df.describe())
 
     # Sélection des variables
@@ -34,7 +34,7 @@ if uploaded_file:
     X_scaled = scaler.fit_transform(X)
 
     # Méthode du coude
-    st.subheader("📈 Méthode du coude")
+    st.subheader("Méthode du coude")
     inertias = []
     k_range = range(1, 11)
     for k in k_range:
@@ -56,15 +56,15 @@ if uploaded_file:
 
     df['Cluster'] = clusters
 
-    st.subheader("🧾 Données segmentées")
+    st.subheader("Données segmentées")
     st.dataframe(df)
 
     # Moyenne par cluster
-    st.subheader("📋 Moyennes par cluster")
+    st.subheader("Moyennes par cluster")
     st.dataframe(df.groupby('Cluster')[features].mean())
 
     # Visualisation 2D
-    st.subheader("📍 Visualisation des clusters (CA vs Clients/jour)")
+    st.subheader("Visualisation des clusters (CA vs Clients/jour)")
     fig2, ax2 = plt.subplots()
     sns.scatterplot(x='Chiffre d’affaires', y='Clients/jour', hue='Cluster', data=df, palette="tab10", ax=ax2)
     st.pyplot(fig2)
