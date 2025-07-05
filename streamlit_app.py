@@ -16,6 +16,8 @@ st.title("🛍️ Segmentation des magasins avec K-Means")
 uploaded_file = st.file_uploader("📂 Importer le fichier Excel", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
+    st.write("✅ Colonnes détectées :", df.columns.tolist())
+
 
     st.subheader("🔍 Aperçu des données")
     st.dataframe(df.head())
