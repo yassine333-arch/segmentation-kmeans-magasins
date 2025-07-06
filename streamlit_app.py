@@ -26,7 +26,7 @@ if uploaded_file:
     st.write(df.describe())
 
     # Sélection des variables
-    features = ['Chiffre d’affaires', 'Clients/jour', 'Surface', 'Employés']
+    features = ['Chiffre d’affaires', 'Clients/jour', 'Surface(m²)', 'Employés']
     X = df[features]
 
     # Standardisation
