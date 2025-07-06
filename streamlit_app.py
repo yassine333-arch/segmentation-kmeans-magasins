@@ -33,6 +33,11 @@ if uploaded_file:
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
+    # Facultatif : afficher un extrait des données standardisées
+    st.subheader("📐 Données standardisées (extrait)")
+    st.dataframe(pd.DataFrame(X_scaled, columns=features).head())
+
+
     # Méthode du coude
     st.subheader("Méthode du coude")
     inertias = []
