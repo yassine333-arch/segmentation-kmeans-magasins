@@ -16,8 +16,11 @@ st.title("Segmentation des magasins avec K-Means")
 uploaded_file = st.file_uploader("Importer le fichier Excel", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
-    st.write("Colonnes détectées :", df.columns.tolist())
 
+    # Nettoyage des noms de colonnes
+    df.columns = df.columns.str.strip().str.replace("’", "'")
+
+    st.write("Colonnes détectées :", df.columns.tolist())
 
     st.subheader("Aperçu des données")
     st.dataframe(df.head())
@@ -26,17 +29,22 @@ if uploaded_file:
     st.write(df.describe())
 
     # Sélection des variables
-    features = ['Chiffre d’affaires', 'Clients/jour', 'Surface(m²)', 'Employés']
+    features = ["Chiffre d'affaires (DH)", "Clients/jour", "Surface (m²)", "Employés"]
+
+    # Vérification de la présence des colonnes
+    required_cols = set(features)
+    if not required_cols.issubset(df.columns):
+        st.error(f"Les colonnes nécessaires sont manquantes : {required_cols - set(df.columns)}")
+        st.stop()
+
     X = df[features]
 
     # Standardisation
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    # Facultatif : afficher un extrait des données standardisées
     st.subheader("Données standardisées (extrait)")
     st.dataframe(pd.DataFrame(X_scaled, columns=features).head())
-
 
     # Méthode du coude
     st.subheader("Méthode du coude")
@@ -64,12 +72,21 @@ if uploaded_file:
     st.subheader("Données segmentées")
     st.dataframe(df)
 
-    # Moyenne par cluster
     st.subheader("Moyennes par cluster")
     st.dataframe(df.groupby('Cluster')[features].mean())
+
+    st.subheader("Centres des clusters (valeurs standardisées)")
+    st.dataframe(pd.DataFrame(kmeans.cluster_centers_, columns=features))
 
     # Visualisation 2D
     st.subheader("Visualisation des clusters (CA vs Clients/jour)")
     fig2, ax2 = plt.subplots()
-    sns.scatterplot(x='Chiffre d’affaires', y='Clients/jour', hue='Cluster', data=df, palette="tab10", ax=ax2)
+    sns.scatterplot(x="Chiffre d'affaires (DH)", y="Clients/jour", hue='Cluster', data=df, palette="tab10", ax=ax2)
+    ax2.set_title("Clusters : Chiffre d'affaires vs Clients/jour")
     st.pyplot(fig2)
+
+    # Export
+    st.download_button("📥 Télécharger les données segmentées",
+                       data=df.to_csv(index=False).encode('utf-8'),
+                       file_name="segmentation_clusters.csv",
+                       mime="text/csv")
